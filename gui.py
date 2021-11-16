@@ -7,26 +7,37 @@ from PIL import Image, ImageTk
 
 def ShowImage():
 
-    global myLabel
+    global loadedLabel
 
-    file = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Image File", filetypes=(("JPG file", ".jpg"), ("PNG file", ".png")))    #test
+    file = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Image File", filetypes=(("JPG file", ".jpg"), ("PNG file", ".png")))
     myImage = Image.open(file)
-    myImage.thumbnail((700, 700))
+    #myImage.thumbnail((700, 700))
     myImage = ImageTk.PhotoImage(myImage)   
-    myLabel.configure(image = myImage)      
-    myLabel.image = myImage                 
+    loadedLabel.configure(image = myImage)      
+    loadedLabel.image = myImage
 
 root = Tk()
+root.geometry("800x700")
 
 
-myLabel = Label(root)
-myLabel.pack()
+frame = Frame(width=400, height=300 )
+frame.grid(row=0, column=0)
 
-button = Button(root, text="Click", command=ShowImage).pack()
+frame2 = Frame(width=400, height=300)
+frame2.grid(row=0, column=1)
 
 
 
-root.geometry("400x400")
+loadedLabel = Label(root, bd=5, relief="sunken")
+loadedLabel.grid(ipadx=180, ipady=180, row=1, column=0)
+
+manipulatedLabel = Label(root, bd=5, relief="sunken")
+manipulatedLabel.grid(ipadx=180, ipady=180, row=1, column=1)
+
+
+#button = Button(root, text="Click", command=ShowImage).grid()
+
+
 root.title("GUI")
 root.mainloop()
 
@@ -49,5 +60,5 @@ root.mainloop()
 
 
 
-#myLabel1 = myLabel(root, text="Tatata").grid(row=0, column=0)
+#loadedLabel1 = loadedLabel(root, text="Tatata").grid(row=0, column=0)
 #button = Button(root, text="Bas", padx=100, pady=100, command=Print).grid()
