@@ -1,7 +1,8 @@
 import tkinter as tk
-from tkinter import Button, Frame, Label, Canvas
+from tkinter import Button, Frame, Label, Canvas, LabelFrame, filedialog
 from tkinter.constants import ANCHOR, LEFT
 from PIL import Image, ImageTk
+import os
 
 class GUI:
   def __init__(self):
@@ -12,7 +13,7 @@ class GUI:
     self.get_window_size()
     self.frame1()
     self.frame2()
-    self.frame3()
+    self.frame3(r".\images\default_image.jpg")
     self.frame4()
   
   def frame1(self):
@@ -25,7 +26,7 @@ class GUI:
     self.frame_internal_process = LabelFrame(self.frame_1, text="Image Process")
     self.frame_internal_process.grid(row=0, column=1, padx=(int(self.window_width * 0.05)))
     
-    self.loadButton = Button(self.frame_internal_file, text="Load Image").grid(row=0, column=0, sticky="w")
+    self.loadButton = Button(self.frame_internal_file, text="Load Image", command=self.load_image).grid(row=0, column=0, sticky="w")
     self.saveButton = Button(self.frame_internal_file, text="Save Image").grid(row=1, column=0, sticky="w")
 
 
@@ -53,13 +54,13 @@ class GUI:
     self.frame_2 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3), bg="purple")
     self.frame_2.grid(row=0, column=1)
   
-  def frame3(self):
+  def frame3(self, image_path):
     #ADD frame_3 TO window<
     self.frame_3 = Frame(self.window,  width=int(self.window_width * 0.5), height=int(self.window_height * 0.7))
     self.frame_3.grid(row=1, column=0)
     #ADD frame_3 TO window>
 
-    loaded_image = Image.open(r"C:\Users\MONSTER\OneDrive\Pictures\Screenshots\rooooot.jpg")
+    loaded_image = Image.open(image_path)
     #why -5, ask to asim:)
     loaded_image.thumbnail((self.get_responsive_width(0.5), self.get_responsive_height(0.7)))    
     loaded_image = ImageTk.PhotoImage(loaded_image)
@@ -79,6 +80,10 @@ class GUI:
     image_label = Label(self.frame_4, image=edited_image, width=self.get_responsive_width(0.5), height=self.get_responsive_height(0.7))
     image_label.image = edited_image
     image_label.grid(row=0, column=0)
+
+  def load_image(self):
+    image_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Image File", filetypes=(("JPG file", ".jpg"), ("PNG file", ".png")))
+    self.frame3(image_path)
 
   def get_window_size(self):
     self.window_width = self.window.winfo_screenwidth()
