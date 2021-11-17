@@ -12,10 +12,12 @@ class GUI:
     self.window.state("zoomed")
     self.window.resizable(False, False)
     self.get_window_size()
+    self.loaded_image = None
+    self.edited_image = None
     self.frame1()
     self.frame2()
-    self.frame3(r".\images\default_image.jpg")
-    self.frame4(False)
+    self.frame3(self.loaded_image)
+    self.frame4(self.edited_image)
   
   def frame1(self):
     self.frame_1 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3))
@@ -55,40 +57,43 @@ class GUI:
     self.frame_2 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3), bg="purple")
     self.frame_2.grid(row=0, column=1)
   
-  def frame3(self, image_path):
+  def frame3(self, image):
     #ADD frame_3 TO window<
     self.frame_3 = Frame(self.window,  width=int(self.window_width * 0.5), height=int(self.window_height * 0.7))
     self.frame_3.grid(row=1, column=0)
     #ADD frame_3 TO window>
 
-    loaded_image = Image.open(image_path)
-    #why -5, ask to asim:)
-    loaded_image.thumbnail((self.get_responsive_width(0.5), self.get_responsive_height(0.7)))    
-    loaded_image = ImageTk.PhotoImage(loaded_image)
-    image_label = Label(self.frame_3, image=loaded_image, width=self.get_responsive_width(0.5), height=self.get_responsive_height(0.7))
-    image_label.image = loaded_image
+    if image == None: image = Image.open(r".\images\default_image.jpg")
+    image.thumbnail((self.get_responsive_width(0.5), self.get_responsive_height(0.7)))    
+    image = ImageTk.PhotoImage(image)
+    image_label = Label(self.frame_3, image=image, width=self.get_responsive_width(0.5), height=self.get_responsive_height(0.7))
+    image_label.image = image
     image_label.grid(row=0, column=0)
 
-  def frame4(self, edited_image):
+  def frame4(self, image):
+    #ADD frame_4 TO window>
     self.frame_4 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.7))
     self.frame_4.grid(row=1, column=1)
+    #ADD frame_4 TO window>
 
-    edited_image = Image.open(r".\images\default_image.jpg") if(edited_image==False) else edited_image
+    if image == None: image = Image.open(r".\images\default_image.jpg")
     #why -5, ask to asim:)
-    edited_image.thumbnail((self.get_responsive_width(0.5), self.get_responsive_height(0.7)))    
-    edited_image = ImageTk.PhotoImage(edited_image)
-    image_label = Label(self.frame_4, image=edited_image, width=self.get_responsive_width(0.5), height=self.get_responsive_height(0.7))
-    image_label.image = edited_image
+    image.thumbnail((self.get_responsive_width(0.5), self.get_responsive_height(0.7)))    
+    image = ImageTk.PhotoImage(image)
+    image_label = Label(self.frame_4, image=image, width=self.get_responsive_width(0.5), height=self.get_responsive_height(0.7))
+    image_label.image = image
     image_label.grid(row=0, column=0)
 
   def load_image(self):
     image_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Image File", filetypes=(("JPG file", ".jpg"), ("PNG file", ".png")))
-    self.frame3(image_path)
+    self.loaded_image = Image.open(image_path)
+    self.edited_image = self.loaded_image.copy()
+    self.frame3(self.loaded_image)
+
 
   def grayscale_image(self):
-    #call grayscale image
-    grayscale.grayscale()
-
+    self.edited_image = grayscale.grayscale(self.edited_image)
+    self.frame4(self.edited_image)
 
   def get_window_size(self):
     self.window_width = self.window.winfo_screenwidth()
