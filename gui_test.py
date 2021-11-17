@@ -3,7 +3,7 @@ from tkinter import Button, Frame, Label, Canvas, LabelFrame, filedialog
 from tkinter.constants import ANCHOR, LEFT
 from PIL import Image, ImageTk
 import os
-from functions import grayscale
+from functions import grayscale, blur, edge_detection
 
 class GUI:
   def __init__(self):
@@ -34,7 +34,7 @@ class GUI:
 
 
 
-    self.blurButton = Button(self.frame_internal_process, text="Blur Image").grid(row=0, column=2, sticky="w")
+    self.blurButton = Button(self.frame_internal_process, text="Blur Image", command=self.blur_image).grid(row=0, column=2, sticky="w")
     self.deblurButton = Button(self.frame_internal_process, text="Deblur Image").grid(row=1, column=2, sticky="w")
     self.grayscaleButton = Button(self.frame_internal_process, text="Grayscale Image", command=self.grayscale_image).grid(row=2, column=2, sticky="w")
     self.cropButton = Button(self.frame_internal_process, text="Crop Image").grid(row=3, column=2, sticky="w")
@@ -51,7 +51,7 @@ class GUI:
     self.contrastButton = Button(self.frame_internal_process, text="Adjust Contrast of Image").grid(row=1, column=3, sticky="w")
     self.saturationButton = Button(self.frame_internal_process, text="Adjust Saturation of Image").grid(row=2, column=3, sticky="w")
     self.noiseButton = Button(self.frame_internal_process, text="Add Noise to Image").grid(row=3, column=3, sticky="w")
-    self.detectEdgesButton = Button(self.frame_internal_process, text="Detect Edges of Image").grid(row=3, column=3, sticky="w")
+    self.detectEdgesButton = Button(self.frame_internal_process, text="Detect Edges of Image", command=self.detected_edges_image).grid(row=4, column=3, sticky="w")
 
   def frame2(self):
     self.frame_2 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3), bg="purple")
@@ -93,6 +93,14 @@ class GUI:
 
   def grayscale_image(self):
     self.edited_image = grayscale.grayscale(self.edited_image)
+    self.frame4(self.edited_image)
+
+  def blur_image(self):
+    self.edited_image = blur.blur(self.edited_image)
+    self.frame4(self.edited_image)
+
+  def detected_edges_image(self):
+    self.edited_image = edge_detection.edge_detection(self.edited_image)
     self.frame4(self.edited_image)
 
   def get_window_size(self):
