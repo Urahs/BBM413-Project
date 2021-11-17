@@ -16,18 +16,15 @@ def ShowImage():
     myImage = ImageTk.PhotoImage(myImage)
     loadedLabel.grid(ipadx=0, ipady=0, row=1, column=0, padx=10)
     
+    # if neccesary(width smaller than height) add extra pad 
+    extraPadValue = 0
     if height>width:
         temp = (380*width)/height
-        #TODO şurayı hallet
-
-
-    """ if(width >= 380):
-        loadedLabel.grid(ipadx=0, ipady=0, row=1, column=0, padx=10)
-    else:
-        print("aa")
-        loadedLabel.grid(ipadx=0, ipady=0, row=1, column=0, padx=10+(360-width)) """
+        extraPadValue = (380-temp)/2
+    
+    loadedLabel.grid(ipadx=0, ipady=0, row=1, column=0, padx=10+extraPadValue)
         
-    loadedLabel.configure(image = myImage)      
+    loadedLabel.configure(image = myImage)    
     loadedLabel.image = myImage
 
 root = Tk()
@@ -47,7 +44,7 @@ loadedLabel = Label(root, bd=5, relief="sunken", text="Test")
 loadedLabel.grid(ipadx=180, ipady=180, row=1, column=0, padx=10)
 
 manipulatedLabel = Label(root, bd=5, relief="sunken")
-manipulatedLabel.grid(ipadx=180, ipady=180, row=1, column=1, padx=(0,50))
+manipulatedLabel.grid(ipadx=180, ipady=180, row=1, column=1, padx=(0,10))
 
 
 button = Button(frame, text="Click", command=ShowImage).grid()
@@ -55,25 +52,3 @@ button = Button(frame, text="Click", command=ShowImage).grid()
 
 root.title("GUI")
 root.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#loadedLabel1 = loadedLabel(root, text="Tatata").grid(row=0, column=0)
-#button = Button(root, text="Bas", padx=100, pady=100, command=Print).grid()
