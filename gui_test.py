@@ -3,6 +3,7 @@ from tkinter import Button, Frame, Label, Canvas, LabelFrame, filedialog
 from tkinter.constants import ANCHOR, LEFT
 from PIL import Image, ImageTk
 import os
+from functions import grayscale
 
 class GUI:
   def __init__(self):
@@ -14,7 +15,7 @@ class GUI:
     self.frame1()
     self.frame2()
     self.frame3(r".\images\default_image.jpg")
-    self.frame4()
+    self.frame4(False)
   
   def frame1(self):
     self.frame_1 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3))
@@ -33,7 +34,7 @@ class GUI:
 
     self.blurButton = Button(self.frame_internal_process, text="Blur Image").grid(row=0, column=2, sticky="w")
     self.deblurButton = Button(self.frame_internal_process, text="Deblur Image").grid(row=1, column=2, sticky="w")
-    self.grayscaleButton = Button(self.frame_internal_process, text="Grayscale Image").grid(row=2, column=2, sticky="w")
+    self.grayscaleButton = Button(self.frame_internal_process, text="Grayscale Image", command=self.grayscale_image).grid(row=2, column=2, sticky="w")
     self.cropButton = Button(self.frame_internal_process, text="Crop Image").grid(row=3, column=2, sticky="w")
     self.flipButton = Button(self.frame_internal_process, text="Flip Image").grid(row=4, column=2, sticky="w")
     self.mirrorButton = Button(self.frame_internal_process, text="Mirror Image").grid(row=5, column=2, sticky="w")
@@ -68,12 +69,11 @@ class GUI:
     image_label.image = loaded_image
     image_label.grid(row=0, column=0)
 
-
-  def frame4(self):
+  def frame4(self, edited_image):
     self.frame_4 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.7))
     self.frame_4.grid(row=1, column=1)
 
-    edited_image = Image.open(r".\images\default_image.jpg")
+    edited_image = Image.open(r".\images\default_image.jpg") if(edited_image==False) else edited_image
     #why -5, ask to asim:)
     edited_image.thumbnail((self.get_responsive_width(0.5), self.get_responsive_height(0.7)))    
     edited_image = ImageTk.PhotoImage(edited_image)
@@ -84,6 +84,11 @@ class GUI:
   def load_image(self):
     image_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Image File", filetypes=(("JPG file", ".jpg"), ("PNG file", ".png")))
     self.frame3(image_path)
+
+  def grayscale_image(self):
+    #call grayscale image
+    grayscale.grayscale()
+
 
   def get_window_size(self):
     self.window_width = self.window.winfo_screenwidth()
