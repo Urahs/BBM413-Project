@@ -5,6 +5,16 @@ import tkinter as tk
 from PIL import Image, ImageTk
 
 
+# if neccesary(width smaller than height) add extra pad               <<<<------------------         bu olay resmi döndürürken de başımıza gelcek
+def CalculateExtraPadding(width, height):
+    extraPadValue = 0
+    if height>width:
+        temp = (380*width)/height
+        extraPadValue = (380-temp)/2
+    return extraPadValue
+
+
+
 def ShowImage():
 
     global loadedLabel
@@ -16,13 +26,8 @@ def ShowImage():
     myImage = ImageTk.PhotoImage(myImage)
     loadedLabel.grid(ipadx=0, ipady=0, row=1, column=0, padx=10)
     
-    # if neccesary(width smaller than height) add extra pad 
-    extraPadValue = 0
-    if height>width:
-        temp = (380*width)/height
-        extraPadValue = (380-temp)/2
     
-    loadedLabel.grid(ipadx=0, ipady=0, row=1, column=0, padx=10+extraPadValue)
+    loadedLabel.grid(ipadx=0, ipady=0, row=1, column=0, padx = 10 + CalculateExtraPadding(width, height))
         
     loadedLabel.configure(image = myImage)    
     loadedLabel.image = myImage
