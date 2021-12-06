@@ -3,7 +3,7 @@ from tkinter import Button, Frame, Label, Canvas, LabelFrame, filedialog, Scale
 from tkinter.constants import ANCHOR, HORIZONTAL, LEFT
 from PIL import Image, ImageTk
 import os
-from functions import grayscale, reverse_color, mirror, flip, brightness
+from functions import grayscale, reverse_color, mirror, flip, brightness, contrast
 
 class GUI:
   def __init__(self):
@@ -50,15 +50,20 @@ class GUI:
 
 
     self.brightButton = Button(self.frame_internal_process, text="Adjust Brightness of Image", command=self.brightness).grid(row=0, column=3, sticky="w")
-    self.contrastButton = Button(self.frame_internal_process, text="Adjust Contrast of Image").grid(row=1, column=3, sticky="w")
+    self.contrastButton = Button(self.frame_internal_process, text="Adjust Contrast of Image", command=self.contrast).grid(row=1, column=3, sticky="w")
     self.saturationButton = Button(self.frame_internal_process, text="Adjust Saturation of Image").grid(row=2, column=3, sticky="w")
     self.noiseButton = Button(self.frame_internal_process, text="Add Noise to Image").grid(row=3, column=3, sticky="w")
     self.detectEdgesButton = Button(self.frame_internal_process, text="Detect Edges of Image").grid(row=4, column=3, sticky="w")
 
 
-  def apply(self, val):
+  def apply(self, val, condition):
     self.sliderValue = val
-    self.edited_image = brightness.brightness(self.loaded_image, self.sliderValue)
+    
+    if condition == "brightness":
+      self.edited_image = brightness.brightness(self.loaded_image, self.sliderValue)
+    elif condition == "contrast":
+      self.edited_image = contrast.contrast(self.loaded_image, self.sliderValue)
+
     self.frame4(self.edited_image)
 
 
@@ -66,11 +71,11 @@ class GUI:
     self.frame_2 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3))
     self.frame_2.grid(row=0, column=1)
 
-    if condition == "brightness":
+    if condition == "brightness" or condition == "contrast":
       slider = Scale(self.frame_2, from_=0, to=100, orient=HORIZONTAL, length=600,tickinterval=100)
       slider.grid()
 
-      applyButton = Button(self.frame_2, text="Apply", command= lambda: self.apply(slider.get()))
+      applyButton = Button(self.frame_2, text="Apply", command= lambda: self.apply(slider.get(), condition))
       applyButton.grid()
 
     
@@ -114,27 +119,34 @@ class GUI:
     self.loaded_image = Image.open(image_path)
     self.edited_image = self.loaded_image.copy()
     self.frame3(self.loaded_image)
+    self.frame2("none")
 
 
   def grayscale_image(self):
     self.edited_image = grayscale.grayscale(self.edited_image)
     self.frame4(self.edited_image)
+    self.frame2("none")
 
   def reverse_color_image(self):
     self.edited_image = reverse_color.reverse_color(self.edited_image)
     self.frame4(self.edited_image)
+    self.frame2("none")
   
   def mirror(self):
     self.edited_image = mirror.mirror(self.edited_image)
     self.frame4(self.edited_image)
+    self.frame2("none")
 
   def flip(self):
     self.edited_image = flip.flip(self.edited_image)
     self.frame4(self.edited_image)
+    self.frame2("none")
 
   def brightness(self):
     self.frame2("brightness")
-    
+
+  def contrast(self):
+    self.frame2("contrast")
 
 
   def get_window_size(self):
