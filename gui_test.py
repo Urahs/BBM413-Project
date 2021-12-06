@@ -36,7 +36,7 @@ class GUI:
     self.frame_internal_process.grid(row=0, column=1, padx=(int(self.window_width * 0.05)))
     
     self.loadButton = Button(self.frame_internal_file, text="Load Image", command=self.load_image).grid(row=0, column=0, sticky="w")
-    self.saveButton = Button(self.frame_internal_file, text="Save Image").grid(row=1, column=0, sticky="w")
+    self.saveButton = Button(self.frame_internal_file, text="Save Image", command=self.save_image).grid(row=1, column=0, sticky="w")
 
 
 
@@ -132,6 +132,11 @@ class GUI:
     self.edited_image = self.loaded_image.copy()
     self.frame3(self.loaded_image)
     self.frame2("none")
+
+  def save_image(self):
+    currdir = os.getcwd()
+    savedir = filedialog.askdirectory(parent=self.window, initialdir=currdir, title='Please select a directory')
+    self.edited_image.save(savedir + "\\" + "output_image.png")
 
 
   def grayscale_image(self):
