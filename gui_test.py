@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 import os
 
 from PIL.ImageEnhance import Sharpness
-from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness
+from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation
 
 class GUI:
   def __init__(self):
@@ -16,7 +16,7 @@ class GUI:
     self.get_window_size()
     self.loaded_image = None
     self.edited_image = None
-    self.frame2Tools = ["sharpness", "brightness", "contrast"] 
+    self.frame2Tools = ["sharpness", "saturation", "brightness", "contrast"] 
     self.frame1()
     self.frame2("none")
     self.frame3(self.loaded_image)
@@ -48,14 +48,13 @@ class GUI:
     self.mirrorButton = Button(self.frame_internal_process, text="Mirror Image", command=self.mirror).grid(row=5, column=2, sticky="w")
     self.rotateButton = Button(self.frame_internal_process, text="Rotate Image").grid(row=6, column=2, sticky="w")
     self.reverseColorButton = Button(self.frame_internal_process, text="Reverse Color Image", command=self.reverse_color_image).grid(row=7, column=2, sticky="w")
-    #self.Button = Button(self.frame_internal_process, text="").grid(row=, column=2, sticky="w")
     self.changeColorBalanceButton = Button(self.frame_internal_process, text="Change Color Balance Image").grid(row=8, column=2, sticky="w")
 
 
 
     self.brightButton = Button(self.frame_internal_process, text="Adjust Brightness of Image", command=self.brightness).grid(row=0, column=3, sticky="w")
     self.contrastButton = Button(self.frame_internal_process, text="Adjust Contrast of Image", command=self.contrast).grid(row=1, column=3, sticky="w")
-    self.saturationButton = Button(self.frame_internal_process, text="Adjust Saturation of Image").grid(row=2, column=3, sticky="w")
+    self.saturationButton = Button(self.frame_internal_process, text="Adjust Saturation of Image", command=self.saturation).grid(row=2, column=3, sticky="w")
     self.noiseButton = Button(self.frame_internal_process, text="Add Noise to Image").grid(row=3, column=3, sticky="w")
     self.detectEdgesButton = Button(self.frame_internal_process, text="Detect Edges of Image").grid(row=4, column=3, sticky="w")
 
@@ -68,6 +67,8 @@ class GUI:
       self.edited_image = contrast.contrast(self.loaded_image, self.sliderValue)
     elif condition == "sharpness":
       self.edited_image = sharpness.sharpness(self.loaded_image, self.sliderValue)
+    elif condition == "saturation":
+      self.edited_image = saturation.saturation(self.loaded_image, self.sliderValue)
 
     self.frame4(self.edited_image)
 
@@ -79,8 +80,11 @@ class GUI:
     if condition in self.frame2Tools:
       slider = Scale(self.frame_2, from_=0, to=100, orient=HORIZONTAL, length=600, tickinterval=100)
       slider.set(50)
-      if condition == self.frame2Tools[0]:
+      if condition == self.frame2Tools[0]: # if condition is sharpness
         slider.set(0)
+      if condition == self.frame2Tools[1]: # if condition is saturation
+        slider.set(30)
+
       slider.grid()
 
       applyButton = Button(self.frame_2, text="Apply", command= lambda: self.apply(slider.get(), condition))
@@ -158,6 +162,9 @@ class GUI:
 
   def sharpness(self):
     self.frame2("sharpness")
+  
+  def saturation(self):
+    self.frame2("saturation")
 
 
   def get_window_size(self):
