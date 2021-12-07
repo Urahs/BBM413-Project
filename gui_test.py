@@ -94,10 +94,6 @@ class GUI:
 
     
 
-    
-    
-  
-
 
 
   
@@ -135,10 +131,8 @@ class GUI:
     self.frame3(self.loaded_image)
     self.frame2("none")
 
-  # https://docs.python.org/3/library/dialog.html #                  <<<<<-------------- ŞURAYA Bİ BAKMAK LAZIM, sadece dosya ismi ve konumu almaya çalışalım
   def save_image(self):
-    currdir = os.getcwd()
-    file = asksaveasfile(filetypes = self.save_file_types, defaultextension = self.save_file_types)
+    file = asksaveasfile(initialdir=os.getcwd(), title="Save Image", filetypes = self.save_file_types, defaultextension = self.save_file_types)
     self.edited_image.save(file.name)
 
 
