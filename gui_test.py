@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import Button, Frame, Label, Canvas, LabelFrame, filedialog, Scale
-from tkinter.constants import ANCHOR, HORIZONTAL, LEFT
+from tkinter import Button, Frame, Label, LabelFrame, filedialog, Scale
+from tkinter.constants import HORIZONTAL
 from PIL import Image, ImageTk
 import os
 
@@ -95,7 +95,6 @@ class GUI:
     
 
 
-
   
   def frame3(self, image):
     #ADD frame_3 TO window<
@@ -132,7 +131,7 @@ class GUI:
     self.frame2("none")
 
   def save_image(self):
-    file = asksaveasfile(initialdir=os.getcwd(), title="Save Image", filetypes = self.save_file_types, defaultextension = self.save_file_types)
+    file = asksaveasfile(initialdir=os.getcwd(), title="Save Image", initialfile="resulted_image", filetypes = self.save_file_types, defaultextension = self.save_file_types)
     self.edited_image.save(file.name)
 
 
