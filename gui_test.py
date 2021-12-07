@@ -4,7 +4,7 @@ from tkinter.constants import HORIZONTAL
 from PIL import Image, ImageTk
 import os
 
-from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation
+from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation
 from tkinter.filedialog import asksaveasfile
 
 
@@ -17,7 +17,7 @@ class GUI:
     self.get_window_size()
     self.loaded_image = None
     self.edited_image = None
-    self.frame2Tools = ["sharpness", "saturation", "brightness", "contrast"] 
+    self.frame2Tools = ["sharpness", "saturation", "rotation", "brightness", "contrast"] 
     self.frame1()
     self.frame2("none")
     self.frame3(self.loaded_image)
@@ -48,7 +48,7 @@ class GUI:
     self.cropButton = Button(self.frame_internal_process, text="Crop Image").grid(row=3, column=2, sticky="w")
     self.flipButton = Button(self.frame_internal_process, text="Flip Image", command=self.flip).grid(row=4, column=2, sticky="w")
     self.mirrorButton = Button(self.frame_internal_process, text="Mirror Image", command=self.mirror).grid(row=5, column=2, sticky="w")
-    self.rotateButton = Button(self.frame_internal_process, text="Rotate Image").grid(row=6, column=2, sticky="w")
+    self.rotateButton = Button(self.frame_internal_process, text="Rotate Image", command=self.rotation).grid(row=6, column=2, sticky="w")
     self.reverseColorButton = Button(self.frame_internal_process, text="Reverse Color Image", command=self.reverse_color_image).grid(row=7, column=2, sticky="w")
     self.changeColorBalanceButton = Button(self.frame_internal_process, text="Change Color Balance Image").grid(row=8, column=2, sticky="w")
 
@@ -71,6 +71,8 @@ class GUI:
       self.edited_image = sharpness.sharpness(self.loaded_image, self.sliderValue)
     elif condition == "saturation":
       self.edited_image = saturation.saturation(self.loaded_image, self.sliderValue)
+    elif condition == "rotation":
+      self.edited_image = rotation.rotation(self.loaded_image, self.sliderValue)
 
     self.frame4(self.edited_image)
 
@@ -80,9 +82,14 @@ class GUI:
     self.frame_2.grid(row=0, column=1)
 
     if condition in self.frame2Tools:
-      slider = Scale(self.frame_2, from_=0, to=100, orient=HORIZONTAL, length=600, tickinterval=100)
+      
+      if condition == "rotation":
+        slider = Scale(self.frame_2, from_=0, to=360, orient=HORIZONTAL, length=600, tickinterval=45)
+      else:
+        slider = Scale(self.frame_2, from_=0, to=100, orient=HORIZONTAL, length=600, tickinterval=100)
+      
       slider.set(50)
-      if condition == self.frame2Tools[0]: # if condition is sharpness
+      if condition == self.frame2Tools[0] or condition == self.frame2Tools[2]: # if condition is sharpness or rotation
         slider.set(0)
       if condition == self.frame2Tools[1]: # if condition is saturation
         slider.set(30)
@@ -123,7 +130,7 @@ class GUI:
     image_label.image = image
     image_label.grid(row=0, column=0)
 
-  def load_image(self):
+  def load_image(self): 
     image_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Image File", filetypes = self.load_file_types)
     self.loaded_image = Image.open(image_path)
     self.edited_image = self.loaded_image.copy()
@@ -166,6 +173,9 @@ class GUI:
   
   def saturation(self):
     self.frame2("saturation")
+  
+  def rotation(self):
+    self.frame2("rotation")
 
 
   def get_window_size(self):
