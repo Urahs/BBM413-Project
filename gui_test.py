@@ -4,8 +4,9 @@ from tkinter.constants import ANCHOR, HORIZONTAL, LEFT
 from PIL import Image, ImageTk
 import os
 
-from PIL.ImageEnhance import Sharpness
 from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation
+from tkinter.filedialog import asksaveasfile
+
 
 class GUI:
   def __init__(self):
@@ -22,7 +23,8 @@ class GUI:
     self.frame3(self.loaded_image)
     self.frame4(self.edited_image)
     
-     
+    self.load_file_types = [('All Files', '*.*'), ("JPG file", ".jpg"), ("PNG file", ".png"), ("JPEG file", ".jpeg")]
+    self.save_file_types = [("JPG file", ".jpg"), ("PNG file", ".png"), ("JPEG file", ".jpeg")]
     self.sliderValue = 0
   
   def frame1(self):
@@ -127,16 +129,17 @@ class GUI:
     image_label.grid(row=0, column=0)
 
   def load_image(self):
-    image_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Image File", filetypes=(("JPG file", ".jpg"), ("PNG file", ".png")))
+    image_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Image File", filetypes = self.load_file_types)
     self.loaded_image = Image.open(image_path)
     self.edited_image = self.loaded_image.copy()
     self.frame3(self.loaded_image)
     self.frame2("none")
 
+  # https://docs.python.org/3/library/dialog.html #                  <<<<<-------------- ŞURAYA Bİ BAKMAK LAZIM, sadece dosya ismi ve konumu almaya çalışalım
   def save_image(self):
     currdir = os.getcwd()
-    savedir = filedialog.askdirectory(parent=self.window, initialdir=currdir, title='Please select a directory')
-    self.edited_image.save(savedir + "\\" + "output_image.png")
+    file = asksaveasfile(filetypes = self.save_file_types, defaultextension = self.save_file_types)
+    self.edited_image.save(file.name)
 
 
   def grayscale_image(self):
