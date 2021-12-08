@@ -41,6 +41,7 @@ class GUI:
     
     self.loadButton = Button(self.frame_internal_file, text="Load Image", command=self.load_image).grid(row=0, column=0, sticky="w")
     self.saveButton = Button(self.frame_internal_file, text="Save Image", command=self.save_image).grid(row=1, column=0, sticky="w")
+    self.resetButton = Button(self.frame_internal_file, text="Reset Image", command=self.reset_image).grid(row=2, column=0, sticky="w")
 
 
 
@@ -144,6 +145,11 @@ class GUI:
   def save_image(self):
     file = asksaveasfile(initialdir=os.getcwd(), title="Save Image", initialfile="resulted_image", filetypes = self.save_file_types, defaultextension = self.save_file_types)
     self.edited_image.save(file.name)
+
+  def reset_image(self):
+    self.edited_image = self.loaded_image.copy()
+    self.frame4(self.edited_image)
+    self.frame2("none")
 
 
   def grayscale_image(self):
