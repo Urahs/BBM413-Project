@@ -105,11 +105,8 @@ class GUI:
 
     
 
-  def clear_frame():
-   for widgets in self.frame2.winfo_children():
-      widgets.destroy()
 
-  
+
   def frame3(self, image):
     #ADD frame_3 TO window<
     self.frame_3 = Frame(self.window,  width=int(self.window_width * 0.5), height=int(self.window_height * 0.7))
