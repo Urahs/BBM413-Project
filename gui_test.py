@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import Button, Frame, Label, LabelFrame, filedialog, Scale
 from tkinter.constants import HORIZONTAL
+from typing import Text
 from PIL import Image, ImageTk
 import os
 
@@ -17,6 +18,7 @@ class GUI:
     self.get_window_size()
     self.loaded_image = None
     self.edited_image = None
+    self.temp_image = None
     self.frame2Tools = ["sharpness", "saturation", "rotation", "brightness", "contrast"] 
     self.frame1()
     self.frame2("none")
@@ -64,22 +66,24 @@ class GUI:
   def apply(self, val, condition):
     self.sliderValue = val
     if condition == "brightness":
-      self.edited_image = brightness.brightness(self.loaded_image, self.sliderValue)
+      self.edited_image = brightness.brightness(self.temp_image, self.sliderValue)
     elif condition == "contrast":
-      self.edited_image = contrast.contrast(self.loaded_image, self.sliderValue)
+      self.edited_image = contrast.contrast(self.temp_image, self.sliderValue)
     elif condition == "sharpness":
-      self.edited_image = sharpness.sharpness(self.loaded_image, self.sliderValue)
+      self.edited_image = sharpness.sharpness(self.temp_image, self.sliderValue)
     elif condition == "saturation":
-      self.edited_image = saturation.saturation(self.loaded_image, self.sliderValue)
+      self.edited_image = saturation.saturation(self.temp_image, self.sliderValue)
     elif condition == "rotation":
-      self.edited_image = rotation.rotation(self.loaded_image, self.sliderValue)
+      self.edited_image = rotation.rotation(self.temp_image, self.sliderValue)
 
     self.frame4(self.edited_image)
 
 
   def frame2(self, condition):
+
     self.frame_2 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3))
     self.frame_2.grid(row=0, column=1)
+    self.temp_image = self.edited_image
 
     if condition in self.frame2Tools:
       
@@ -101,6 +105,9 @@ class GUI:
 
     
 
+  def clear_frame():
+   for widgets in self.frame2.winfo_children():
+      widgets.destroy()
 
   
   def frame3(self, image):
