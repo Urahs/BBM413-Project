@@ -5,7 +5,7 @@ from typing import Text
 from PIL import Image, ImageTk
 import os
 
-from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation
+from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation, noise
 from tkinter.filedialog import asksaveasfile
 
 
@@ -19,7 +19,7 @@ class GUI:
     self.loaded_image = None
     self.edited_image = None
     self.temp_image = None
-    self.frame2Tools = ["sharpness", "saturation", "rotation", "brightness", "contrast"] 
+    self.frame2Tools = ["sharpness", "saturation", "rotation", "brightness", "contrast", "noise"] 
     self.frame1()
     self.frame2("none")
     self.frame3(self.loaded_image)
@@ -28,6 +28,7 @@ class GUI:
     self.load_file_types = [('All Files', '*.*'), ("JPG file", ".jpg"), ("PNG file", ".png"), ("JPEG file", ".jpeg")]
     self.save_file_types = [("JPG file", ".jpg"), ("PNG file", ".png"), ("JPEG file", ".jpeg")]
     self.sliderValue = 0
+    self.noise_type = 0
   
   def frame1(self):
     self.frame_1 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3))
@@ -60,7 +61,7 @@ class GUI:
     self.brightButton = Button(self.frame_internal_process, text="Adjust Brightness of Image", command=self.brightness).grid(row=0, column=3, sticky="w")
     self.contrastButton = Button(self.frame_internal_process, text="Adjust Contrast of Image", command=self.contrast).grid(row=1, column=3, sticky="w")
     self.saturationButton = Button(self.frame_internal_process, text="Adjust Saturation of Image", command=self.saturation).grid(row=2, column=3, sticky="w")
-    self.noiseButton = Button(self.frame_internal_process, text="Add Noise to Image").grid(row=3, column=3, sticky="w")
+    self.noiseButton = Button(self.frame_internal_process, text="Add Noise to Image", command=self.noise).grid(row=3, column=3, sticky="w")
     self.detectEdgesButton = Button(self.frame_internal_process, text="Detect Edges of Image").grid(row=4, column=3, sticky="w")
 
 
@@ -74,6 +75,8 @@ class GUI:
       self.edited_image = sharpness.sharpness(self.temp_image, self.sliderValue)
     elif condition == "saturation":
       self.edited_image = saturation.saturation(self.temp_image, self.sliderValue)
+    elif condition == "noise":
+      self.edited_image = noise.noise(self.temp_image, self.sliderValue, self.noise_type)
     elif condition == "rotation":
       self.edited_image = rotation.rotation(self.temp_image, self.sliderValue)
 
@@ -100,6 +103,7 @@ class GUI:
         slider.set(30)
 
       slider.grid()
+
 
       applyButton = Button(self.frame_2, text="Apply", command= lambda: self.apply(slider.get(), condition))
       applyButton.grid()
@@ -183,6 +187,9 @@ class GUI:
   
   def saturation(self):
     self.frame2("saturation")
+
+  def noise(self):
+    self.frame2("noise")
   
   def rotation(self):
     self.frame2("rotation")
