@@ -1,12 +1,12 @@
 import tkinter as tk
-from tkinter import Button, Frame, IntVar, Label, LabelFrame, Radiobutton, filedialog, Scale
+from tkinter import Button, Entry, Frame, IntVar, Label, LabelFrame, Radiobutton, filedialog, Scale
 from tkinter.constants import HORIZONTAL
 from typing import Text
 from PIL import Image, ImageTk
 import os
 
 
-from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation, noise
+from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation, noise, crop
 from tkinter.filedialog import asksaveasfile
 
 
@@ -30,6 +30,7 @@ class GUI:
     self.save_file_types = [("JPG file", ".jpg"), ("PNG file", ".png"), ("JPEG file", ".jpeg")]
     self.sliderValue = 0
     self.radio_var = IntVar()
+
   
   def frame1(self):
     self.frame_1 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3))
@@ -50,7 +51,7 @@ class GUI:
     self.blurButton = Button(self.frame_internal_process, text="Blur Image").grid(row=0, column=2, sticky="w")
     self.deblurButton = Button(self.frame_internal_process, text="Deblur Image", command=self.sharpness).grid(row=1, column=2, sticky="w")
     self.grayscaleButton = Button(self.frame_internal_process, text="Grayscale Image", command=self.grayscale_image).grid(row=2, column=2, sticky="w")
-    self.cropButton = Button(self.frame_internal_process, text="Crop Image").grid(row=3, column=2, sticky="w")
+    self.cropButton = Button(self.frame_internal_process, text="Crop Image", command=self.crop).grid(row=3, column=2, sticky="w")
     self.flipButton = Button(self.frame_internal_process, text="Flip Image", command=self.flip).grid(row=4, column=2, sticky="w")
     self.mirrorButton = Button(self.frame_internal_process, text="Mirror Image", command=self.mirror).grid(row=5, column=2, sticky="w")
     self.rotateButton = Button(self.frame_internal_process, text="Rotate Image", command=self.rotation).grid(row=6, column=2, sticky="w")
@@ -80,7 +81,42 @@ class GUI:
       self.edited_image = noise.noise(self.temp_image, self.sliderValue, self.radio_var.get())
     elif condition == "rotation":
       self.edited_image = rotation.rotation(self.temp_image, self.sliderValue)
+      
 
+    self.frame4(self.edited_image)
+
+
+  def apply_crop(self, x1, x2, y1, y2):
+
+    # destroy the error mesage if it exists
+    try:
+      self.exception_label.grid_forget()
+    except:
+      None
+
+    inputs = [x1, x2, y1, y2]
+
+    # error detection part is here
+    for i in inputs:
+      try:
+        val = int(i)    #if input is not string
+        if val < 0:     #if input is smaller than 0
+          val = 0/0     #to pass the exception part
+        if i == inputs[0]:        #if x coordinate bounds are overlapping
+          if val+int(inputs[1]) >= 100:
+            val = 0/0
+        elif i == inputs[2]:      #if x coordinate bounds are overlapping
+          if val+int(inputs[3]) >= 100:
+            val = 0/0
+      except:
+        self.exception_label = Label(self.frame_2_2, text="""Please enter a valid input
+■ values must be greater than 0
+■ values must be an integer
+■ sum of the same coordinate values must be smaller than 100""", font=("Arial", 13), anchor="e")
+        self.exception_label.grid()
+        return
+
+    self.edited_image = crop.crop(self.temp_image, inputs) #             <<<<----------------   ŞURDa temp image yerine edited gelcek (?)
     self.frame4(self.edited_image)
 
 
@@ -88,11 +124,15 @@ class GUI:
 
     self.frame_2 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3))
     self.frame_2.grid(row=0, column=1)
+    
+    
+    
+    
+    
     self.temp_image = self.edited_image
 
     if condition in self.frame2Tools:
       
-
       if condition == "noise":
         R1 = Radiobutton(self.frame_2, text="Gaussian", variable = self.radio_var, value=1)
         R1.grid()
@@ -113,14 +153,56 @@ class GUI:
       if condition == self.frame2Tools[1]: # if condition is saturation
         slider.set(30)
 
-      slider.grid()
 
+
+      slider.grid()
+        
 
       applyButton = Button(self.frame_2, text="Apply", command= lambda: self.apply(slider.get(), condition))
       applyButton.grid()
 
     
+    elif condition == "crop":
 
+      self.frame_2_1 = Frame(self.frame_2, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3)/2)
+      self.frame_2_1.grid()
+      self.frame_2_2 = Frame(self.frame_2, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3)/2)
+      self.frame_2_2.grid()
+
+      L1 = Label(self.frame_2_1, text="X coordinate from left")
+      L1.grid(row=0, column=0)
+      entryBox_x1 = Entry(self.frame_2_1, width=2)
+      entryBox_x1.grid(row=0, column=1, padx=(5,0))
+
+      L2 = Label(self.frame_2_1, text="X coordinate from right")
+      L2.grid(row=0, column=3, padx=(50,0))
+      entryBox_x2 = Entry(self.frame_2_1, width=2)
+      entryBox_x2.grid(row=0, column=4, padx=(5,0))
+    
+      
+      
+      L3 = Label(self.frame_2_1, text="Y coordinate from top")
+      L3.grid(row=1, column=0, pady=20)
+      entryBox_y1 = Entry(self.frame_2_1, width=2)
+      entryBox_y1.grid(row=1, column=1, padx=(5,0))
+
+      L4 = Label(self.frame_2_1, text="Y coordinate from bottom")
+      L4.grid(row=1, column=3, padx=(50,0))
+      entryBox_y2 = Entry(self.frame_2_1, width=2)
+      entryBox_y2.grid(row=1, column=4, padx=(5,0))
+
+
+      applyButton = Button(self.frame_2_2, text="Apply", command= lambda: self.apply_crop(entryBox_x1.get(), entryBox_x2.get(), entryBox_y1.get(), entryBox_y2.get()))
+      applyButton.grid()
+
+    
+  def clear_old_frames(self):
+    try:
+      self.frame_2.grid_forget()
+      self.frame_2_1.grid_forget()
+      self.frame_2_2.grid_forget()
+    except:
+      None
 
 
   def frame3(self, image):
@@ -162,53 +244,62 @@ class GUI:
     self.edited_image.save(file.name)
 
   def reset_image(self):
+    self.clear_old_frames()
     self.edited_image = self.loaded_image.copy()
     self.frame4(self.edited_image)
     self.frame2("none")
 
 
   def grayscale_image(self):
+    self.clear_old_frames()
     self.edited_image = grayscale.grayscale(self.edited_image)
     self.frame4(self.edited_image)
     self.frame2("none")
 
   def reverse_color_image(self):
+    self.clear_old_frames()
     self.edited_image = reverse_color.reverse_color(self.edited_image)
     self.frame4(self.edited_image)
     self.frame2("none")
   
   def mirror(self):
+    self.clear_old_frames()
     self.edited_image = mirror.mirror(self.edited_image)
     self.frame4(self.edited_image)
     self.frame2("none")
 
   def flip(self):
+    self.clear_old_frames()
     self.edited_image = flip.flip(self.edited_image)
     self.frame4(self.edited_image)
     self.frame2("none")
 
   def brightness(self):
-    self.frame_2.grid_forget()
+    self.clear_old_frames()
     self.frame2("brightness")
 
   def contrast(self):
-    self.frame_2.grid_forget()
+    self.clear_old_frames()
     self.frame2("contrast")
 
   def sharpness(self):
-    self.frame_2.grid_forget()
+    self.clear_old_frames()
     self.frame2("sharpness")
   
   def saturation(self):
-    self.frame_2.grid_forget()
+    self.clear_old_frames()
     self.frame2("saturation")
 
+  def crop(self):
+    self.clear_old_frames()
+    self.frame2("crop")
+
   def noise(self):
-    self.frame_2.grid_forget()
+    self.clear_old_frames()
     self.frame2("noise")
   
   def rotation(self):
-    self.frame_2.grid_forget()
+    self.clear_old_frames()
     self.frame2("rotation")
 
 
