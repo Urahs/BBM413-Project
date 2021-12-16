@@ -5,7 +5,6 @@ from skimage.util import random_noise
 def noise(image, factor, noise_type):
     
     image = np.array(image)
-    image = image[:,:,::-1]
 
     if noise_type == 1:
         noise_img = random_noise(image, mode='gaussian', var=(factor*0.05)/100)
@@ -16,7 +15,5 @@ def noise(image, factor, noise_type):
         
     noise_img = np.array(255*noise_img, dtype = 'uint8')
     
-    #output = Image.fromarray((noise_img * 255).astype(np.uint8))
-    noise_img = noise_img[:,:,::-1]
     output = Image.fromarray(noise_img)
     return output
