@@ -1,9 +1,10 @@
 import tkinter as tk
-from tkinter import Button, Frame, Label, LabelFrame, filedialog, Scale
+from tkinter import Button, Frame, IntVar, Label, LabelFrame, Radiobutton, filedialog, Scale
 from tkinter.constants import HORIZONTAL
 from typing import Text
 from PIL import Image, ImageTk
 import os
+
 
 from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation, noise
 from tkinter.filedialog import asksaveasfile
@@ -28,7 +29,7 @@ class GUI:
     self.load_file_types = [('All Files', '*.*'), ("JPG file", ".jpg"), ("PNG file", ".png"), ("JPEG file", ".jpeg")]
     self.save_file_types = [("JPG file", ".jpg"), ("PNG file", ".png"), ("JPEG file", ".jpeg")]
     self.sliderValue = 0
-    self.noise_type = 0
+    self.radio_var = IntVar()
   
   def frame1(self):
     self.frame_1 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3))
@@ -76,7 +77,7 @@ class GUI:
     elif condition == "saturation":
       self.edited_image = saturation.saturation(self.temp_image, self.sliderValue)
     elif condition == "noise":
-      self.edited_image = noise.noise(self.temp_image, self.sliderValue, self.noise_type)
+      self.edited_image = noise.noise(self.temp_image, self.sliderValue, self.radio_var.get())
     elif condition == "rotation":
       self.edited_image = rotation.rotation(self.temp_image, self.sliderValue)
 
@@ -91,6 +92,16 @@ class GUI:
 
     if condition in self.frame2Tools:
       
+
+      if condition == "noise":
+        R1 = Radiobutton(self.frame_2, text="Gaussian", variable = self.radio_var, value=1)
+        R1.grid()
+        R2 = Radiobutton(self.frame_2, text="Speckle", variable = self.radio_var, value=2)
+        R2.grid()
+        R3 = Radiobutton(self.frame_2, text="Salt&Pepper", variable = self.radio_var, value=3)
+        R3.grid()
+
+
       if condition == "rotation":
         slider = Scale(self.frame_2, from_=0, to=360, orient=HORIZONTAL, length=600, tickinterval=45)
       else:
@@ -177,21 +188,27 @@ class GUI:
     self.frame2("none")
 
   def brightness(self):
+    self.frame_2.grid_forget()
     self.frame2("brightness")
 
   def contrast(self):
+    self.frame_2.grid_forget()
     self.frame2("contrast")
 
   def sharpness(self):
+    self.frame_2.grid_forget()
     self.frame2("sharpness")
   
   def saturation(self):
+    self.frame_2.grid_forget()
     self.frame2("saturation")
 
   def noise(self):
+    self.frame_2.grid_forget()
     self.frame2("noise")
   
   def rotation(self):
+    self.frame_2.grid_forget()
     self.frame2("rotation")
 
 
