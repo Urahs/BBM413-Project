@@ -116,7 +116,7 @@ class GUI:
         self.exception_label.grid()
         return
 
-    self.edited_image = crop.crop(self.temp_image, inputs) #             <<<<----------------   ŞURDa temp image yerine edited gelcek (?)
+    self.edited_image = crop.crop(self.temp_image, inputs)
     self.frame4(self.edited_image)
 
 
