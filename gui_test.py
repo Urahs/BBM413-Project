@@ -18,7 +18,7 @@ class GUI:
     self.loaded_image = None
     self.edited_image = None
     self.temp_image = None
-    self.frame2Tools = ["sharpness", "saturation", "rotation", "brightness", "contrast", "noise"] 
+    self.frame2Tools = ["sharpness", "saturation", "rotation", "brightness", "contrast", "noise", "blur"] 
     self.frame1()
     self.frame2("none")
     self.frame3(self.loaded_image)
@@ -83,6 +83,8 @@ class GUI:
       self.edited_image = noise.noise(self.temp_image, self.sliderValue, self.radio_var.get())
     elif condition == "rotation":
       self.edited_image = rotation.rotation(self.temp_image, self.sliderValue)
+    elif condition == "blur":
+      self.edited_image = blur.blur(self.temp_image, self.sliderValue, self.radio_var.get())
       
 
     self.frame4(self.edited_image)
@@ -142,19 +144,25 @@ class GUI:
         R2.grid()
         R3 = Radiobutton(self.frame_2, text="Salt&Pepper", variable = self.radio_var, value=3)
         R3.grid()
+      elif condition == "blur":
+        R1 = Radiobutton(self.frame_2, text="Gaussian", variable = self.radio_var, value=1)
+        R1.grid()
+        R2 = Radiobutton(self.frame_2, text="Box", variable = self.radio_var, value=2)
+        R2.grid()
 
 
       if condition == "rotation":
         slider = Scale(self.frame_2, from_=0, to=360, orient=HORIZONTAL, length=600, tickinterval=45)
+      elif condition == "blur":
+        slider = Scale(self.frame_2, from_=0, to=20, orient=HORIZONTAL, length=600, tickinterval=45)
       else:
         slider = Scale(self.frame_2, from_=0, to=100, orient=HORIZONTAL, length=600, tickinterval=100)
       
       slider.set(50)
-      if condition == self.frame2Tools[0] or condition == self.frame2Tools[2]: # if condition is sharpness or rotation
+      if condition == "sharpness" or condition == "rotation" or condition == "blur": # if condition is sharpness or rotation
         slider.set(0)
-      if condition == self.frame2Tools[1]: # if condition is saturation
+      elif condition == self.frame2Tools[1]: # if condition is saturation
         slider.set(30)
-
 
 
       slider.grid()
@@ -196,6 +204,8 @@ class GUI:
 
       applyButton = Button(self.frame_2_2, text="Apply", command= lambda: self.apply_crop(entryBox_x1.get(), entryBox_x2.get(), entryBox_y1.get(), entryBox_y2.get()))
       applyButton.grid()
+
+    
 
     
   def clear_old_frames(self):
@@ -305,9 +315,7 @@ class GUI:
 
   def blur_image(self):
     self.clear_old_frames()
-    self.edited_image = blur.blur(self.edited_image)
-    self.frame4(self.edited_image)
-    self.frame2("none")
+    self.frame2("blur")
 
   def detected_edges_image(self):
     self.clear_old_frames()
