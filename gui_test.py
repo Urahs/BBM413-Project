@@ -5,10 +5,8 @@ from typing import Text
 from PIL import Image, ImageTk
 import os
 
-
-from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation, noise, crop
+from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation, noise, crop, blur, edge_detection
 from tkinter.filedialog import asksaveasfile
-
 
 class GUI:
   def __init__(self):
@@ -48,7 +46,7 @@ class GUI:
 
 
 
-    self.blurButton = Button(self.frame_internal_process, text="Blur Image").grid(row=0, column=2, sticky="w")
+    self.blurButton = Button(self.frame_internal_process, text="Blur Image", command=self.blur_image).grid(row=0, column=2, sticky="w")
     self.deblurButton = Button(self.frame_internal_process, text="Deblur Image", command=self.sharpness).grid(row=1, column=2, sticky="w")
     self.grayscaleButton = Button(self.frame_internal_process, text="Grayscale Image", command=self.grayscale_image).grid(row=2, column=2, sticky="w")
     self.cropButton = Button(self.frame_internal_process, text="Crop Image", command=self.crop).grid(row=3, column=2, sticky="w")
@@ -60,11 +58,15 @@ class GUI:
 
 
 
+    self.brightButton = Button(self.frame_internal_process, text="Adjust Brightness of Image").grid(row=0, column=3, sticky="w")
+    self.contrastButton = Button(self.frame_internal_process, text="Adjust Contrast of Image").grid(row=1, column=3, sticky="w")
+    self.saturationButton = Button(self.frame_internal_process, text="Adjust Saturation of Image").grid(row=2, column=3, sticky="w")
+    self.noiseButton = Button(self.frame_internal_process, text="Add Noise to Image").grid(row=3, column=3, sticky="w")
     self.brightButton = Button(self.frame_internal_process, text="Adjust Brightness of Image", command=self.brightness).grid(row=0, column=3, sticky="w")
     self.contrastButton = Button(self.frame_internal_process, text="Adjust Contrast of Image", command=self.contrast).grid(row=1, column=3, sticky="w")
     self.saturationButton = Button(self.frame_internal_process, text="Adjust Saturation of Image", command=self.saturation).grid(row=2, column=3, sticky="w")
     self.noiseButton = Button(self.frame_internal_process, text="Add Noise to Image", command=self.noise).grid(row=3, column=3, sticky="w")
-    self.detectEdgesButton = Button(self.frame_internal_process, text="Detect Edges of Image").grid(row=4, column=3, sticky="w")
+    self.detectEdgesButton = Button(self.frame_internal_process, text="Detect Edges of Image", command=self.detected_edges_image).grid(row=4, column=3, sticky="w")
 
 
   def apply(self, val, condition):
@@ -249,7 +251,6 @@ class GUI:
     self.frame4(self.edited_image)
     self.frame2("none")
 
-
   def grayscale_image(self):
     self.clear_old_frames()
     self.edited_image = grayscale.grayscale(self.edited_image)
@@ -302,6 +303,17 @@ class GUI:
     self.clear_old_frames()
     self.frame2("rotation")
 
+  def blur_image(self):
+    self.clear_old_frames()
+    self.edited_image = blur.blur(self.edited_image)
+    self.frame4(self.edited_image)
+    self.frame2("none")
+
+  def detected_edges_image(self):
+    self.clear_old_frames()
+    self.edited_image = edge_detection.edge_detection(self.edited_image)
+    self.frame4(self.edited_image)
+    self.frame2("none")
 
   def get_window_size(self):
     self.window_width = self.window.winfo_screenwidth()
