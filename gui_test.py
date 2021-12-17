@@ -116,7 +116,7 @@ class GUI:
       except:
         self.exception_label = Label(self.frame_2_2, text="""Please enter a valid input
 INFO: you can crop image with percentage
-● values must be greater than 0
+● values must be greater or equal to 0
 ● values must be an integer
 ● sum of the same coordinate values must be smaller than 100""", font=("Consolas", 12), anchor="e")
         self.exception_label.grid()
