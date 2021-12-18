@@ -5,7 +5,7 @@ from typing import Text
 from PIL import Image, ImageTk
 import os
 
-from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation, noise, crop, blur, edge_detection
+from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation, noise, crop, blur, edge_detection, color_balance
 from tkinter.filedialog import asksaveasfile
 
 class GUI:
@@ -55,7 +55,7 @@ class GUI:
     self.mirrorButton = Button(self.frame_internal_process, text="Mirror Image", command=self.mirror).grid(row=5, column=2, sticky="w")
     self.rotateButton = Button(self.frame_internal_process, text="Rotate Image", command=self.rotation).grid(row=6, column=2, sticky="w")
     self.reverseColorButton = Button(self.frame_internal_process, text="Reverse Color Image", command=self.reverse_color_image).grid(row=7, column=2, sticky="w")
-    self.changeColorBalanceButton = Button(self.frame_internal_process, text="Change Color Balance Image").grid(row=8, column=2, sticky="w")
+    self.changeColorBalanceButton = Button(self.frame_internal_process, text="Change Color Balance Image", command=self.color_balance).grid(row=8, column=2, sticky="w")
 
 
 
@@ -130,7 +130,6 @@ INFO: you can crop image with percentage
 
     self.frame_2 = Frame(self.window, width=int(self.window_width * 0.5), height=int(self.window_height * 0.3))
     self.frame_2.grid(row=0, column=1)
-    
     self.temp_image = self.edited_image
 
     if condition in self.frame2Tools:
@@ -149,7 +148,6 @@ INFO: you can crop image with percentage
         R1.grid()
         R2 = Radiobutton(self.frame_2, text="Box", variable = self.radio_var, value=2)
         R2.grid()
-
 
       if condition == "rotation":
         slider = Scale(self.frame_2, from_=0, to=360, orient=HORIZONTAL, length=600, tickinterval=45)
@@ -203,6 +201,19 @@ INFO: you can crop image with percentage
       applyButton = Button(self.frame_2_2, text="Apply", command= lambda: self.apply_crop(entryBox_x1.get(), entryBox_x2.get(), entryBox_y1.get(), entryBox_y2.get()))
       applyButton.grid()
 
+    elif condition == "color_balance":
+      slider_R = Scale(self.frame_2, from_=0, to=254, orient=HORIZONTAL, length=600, tickinterval=254, label="R VALUE")
+      slider_G = Scale(self.frame_2, from_=0, to=254, orient=HORIZONTAL, length=600, tickinterval=254, label="G VALUE")  
+      slider_B = Scale(self.frame_2, from_=0, to=254, orient=HORIZONTAL, length=600, tickinterval=254, label="B VALUE")
+      slider_R.set(0)
+      slider_G.set(0)
+      slider_B.set(0)
+      slider_R.grid()
+      slider_G.grid()
+      slider_B.grid()
+      applyButton = Button(self.frame_2, text="Apply", command= lambda: self.apply_color_balance(slider_R.get(), slider_G.get(), slider_B.get()))
+      applyButton.grid()
+      
     
 
     
@@ -347,6 +358,14 @@ INFO: you can crop image with percentage
     if self.isThereAProblem():
       return
     self.frame2("rotation")
+
+  def color_balance(self):
+    self.clear_old_frames()
+    self.frame2("color_balance")
+
+  def apply_color_balance(self, sliderR_value, sliderG_value, sliderB_value):
+    self.edited_image = color_balance.color_balance(self.temp_image, sliderR_value, sliderG_value, sliderB_value)
+    self.frame4(self.edited_image)
 
   def blur_image(self):
     if self.isThereAProblem():
