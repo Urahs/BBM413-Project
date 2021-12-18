@@ -5,7 +5,7 @@ from typing import Text
 from PIL import Image, ImageTk
 import os
 
-from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation, noise, crop, blur, edge_detection, color_balance
+from functions import grayscale, reverse_color, mirror, flip, brightness, contrast, sharpness, saturation, rotation, noise, crop, blur, edge_detection, color_balance, is_grayscale
 from tkinter.filedialog import asksaveasfile
 
 class GUI:
@@ -237,15 +237,23 @@ INFO: you can crop image with percentage
       self.exception_label = Label(self.frame_2, text="Please select an image first!",  font=("Consolas", 12), anchor="e")
       self.exception_label.grid()
       return True
+  
+  def grayscale_color_balance_error(self):
+    # destroy the error mesage if it exists
+    try:
+      self.exception_label.grid_forget()
+    except:
+      None
+    self.exception_label = Label(self.frame_2, text="Image can not be grayscale!",  font=("Consolas", 12), anchor="e")
+    self.exception_label.grid()
 
-
-  def isThereAProblem(self):
+  def isThereAProblem(self, special_condition = "none"):
     if self.isLoadedImageEmpty():
       return True
+    elif is_grayscale.is_grayscale(self.temp_image) and special_condition == "color_balance":
+      self.grayscale_color_balance_error()
+      return True
     self.clear_old_frames()
-      
-
-
 
   def frame3(self, image):
     #ADD frame_3 TO window<
@@ -360,6 +368,9 @@ INFO: you can crop image with percentage
     self.frame2("rotation")
 
   def color_balance(self):
+    if self.isThereAProblem("color_balance"):
+      return
+
     self.clear_old_frames()
     self.frame2("color_balance")
 
