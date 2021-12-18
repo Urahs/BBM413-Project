@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import Button, Entry, Frame, IntVar, Label, LabelFrame, Radiobutton, filedialog, Scale
-from tkinter.constants import HORIZONTAL
+from tkinter.constants import DISABLED, HORIZONTAL
 from typing import Text
 from PIL import Image, ImageTk
 import os
@@ -18,7 +18,7 @@ class GUI:
     self.loaded_image = None
     self.edited_image = None
     self.temp_image = None
-    self.frame2Tools = ["sharpness", "saturation", "rotation", "brightness", "contrast", "noise"] 
+    self.frame2Tools = ["sharpness", "saturation", "rotation", "brightness", "contrast", "noise", "blur"] 
     self.frame1()
     self.frame2("none")
     self.frame3(self.loaded_image)
@@ -28,6 +28,7 @@ class GUI:
     self.save_file_types = [("JPG file", ".jpg"), ("PNG file", ".png"), ("JPEG file", ".jpeg")]
     self.sliderValue = 0
     self.radio_var = IntVar()
+    self.isLoaded = False
 
   
   def frame1(self):
@@ -83,6 +84,8 @@ class GUI:
       self.edited_image = noise.noise(self.temp_image, self.sliderValue, self.radio_var.get())
     elif condition == "rotation":
       self.edited_image = rotation.rotation(self.temp_image, self.sliderValue)
+    elif condition == "blur":
+      self.edited_image = blur.blur(self.temp_image, self.sliderValue, self.radio_var.get())
       
 
     self.frame4(self.edited_image)
@@ -112,9 +115,10 @@ class GUI:
             val = 0/0
       except:
         self.exception_label = Label(self.frame_2_2, text="""Please enter a valid input
-■ values must be greater than 0
-■ values must be an integer
-■ sum of the same coordinate values must be smaller than 100""", font=("Arial", 13), anchor="e")
+INFO: you can crop image with percentage
+● values must be greater or equal to 0
+● values must be an integer
+● sum of the same coordinate values must be smaller than 100""", font=("Consolas", 12), anchor="e")
         self.exception_label.grid()
         return
 
@@ -133,10 +137,17 @@ class GUI:
       if condition == "noise":
         R1 = Radiobutton(self.frame_2, text="Gaussian", variable = self.radio_var, value=1)
         R1.grid()
+        R1.select()
         R2 = Radiobutton(self.frame_2, text="Speckle", variable = self.radio_var, value=2)
         R2.grid()
         R3 = Radiobutton(self.frame_2, text="Salt&Pepper", variable = self.radio_var, value=3)
         R3.grid()
+      elif condition == "blur":
+        R1 = Radiobutton(self.frame_2, text="Gaussian", variable = self.radio_var, value=1)
+        R1.select()
+        R1.grid()
+        R2 = Radiobutton(self.frame_2, text="Box", variable = self.radio_var, value=2)
+        R2.grid()
 
       if condition == "rotation":
         slider = Scale(self.frame_2, from_=0, to=360, orient=HORIZONTAL, length=600, tickinterval=45)
@@ -144,11 +155,10 @@ class GUI:
         slider = Scale(self.frame_2, from_=0, to=100, orient=HORIZONTAL, length=600, tickinterval=100)
       
       slider.set(50)
-      if condition == self.frame2Tools[0] or condition == self.frame2Tools[2]: # if condition is sharpness or rotation
+      if condition == "sharpness" or condition == "rotation" or condition == "blur": # if condition is sharpness or rotation
         slider.set(0)
-      if condition == self.frame2Tools[1]: # if condition is saturation
+      elif condition == self.frame2Tools[1]: # if condition is saturation
         slider.set(30)
-
 
 
       slider.grid()
@@ -205,6 +215,8 @@ class GUI:
       applyButton.grid()
       
     
+
+    
   def clear_old_frames(self):
     try:
       self.frame_2.grid_forget()
@@ -212,6 +224,27 @@ class GUI:
       self.frame_2_2.grid_forget()
     except:
       None
+
+  def isLoadedImageEmpty(self):
+
+    # destroy the error mesage if it exists
+    try:
+      self.exception_label.grid_forget()
+    except:
+      None
+
+    if(self.isLoaded == False):
+      self.exception_label = Label(self.frame_2, text="Please select an image first!",  font=("Consolas", 12), anchor="e")
+      self.exception_label.grid()
+      return True
+
+
+  def isThereAProblem(self):
+    if self.isLoadedImageEmpty():
+      return True
+    self.clear_old_frames()
+      
+
 
 
   def frame3(self, image):
@@ -241,73 +274,89 @@ class GUI:
     image_label.image = image
     image_label.grid(row=0, column=0)
 
-  def load_image(self): 
+  def load_image(self):
     image_path = filedialog.askopenfilename(initialdir=os.getcwd(), title="Select Image File", filetypes = self.load_file_types)
     self.loaded_image = Image.open(image_path)
     self.edited_image = self.loaded_image.copy()
     self.frame3(self.loaded_image)
     self.frame2("none")
+    self.frame4(self.edited_image)
+    self.isLoaded = True
 
   def save_image(self):
+    if self.isThereAProblem():
+      return
     file = asksaveasfile(initialdir=os.getcwd(), title="Save Image", initialfile="resulted_image", filetypes = self.save_file_types, defaultextension = self.save_file_types)
     self.edited_image.save(file.name)
 
   def reset_image(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.edited_image = self.loaded_image.copy()
     self.frame4(self.edited_image)
     self.frame2("none")
 
   def grayscale_image(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.edited_image = grayscale.grayscale(self.edited_image)
     self.frame4(self.edited_image)
     self.frame2("none")
 
   def reverse_color_image(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.edited_image = reverse_color.reverse_color(self.edited_image)
     self.frame4(self.edited_image)
     self.frame2("none")
   
   def mirror(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.edited_image = mirror.mirror(self.edited_image)
     self.frame4(self.edited_image)
     self.frame2("none")
 
   def flip(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.edited_image = flip.flip(self.edited_image)
     self.frame4(self.edited_image)
     self.frame2("none")
 
   def brightness(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.frame2("brightness")
 
   def contrast(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.frame2("contrast")
 
   def sharpness(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.frame2("sharpness")
   
   def saturation(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.frame2("saturation")
 
   def crop(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.frame2("crop")
 
   def noise(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.frame2("noise")
   
   def rotation(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.frame2("rotation")
 
   def color_balance(self):
@@ -319,13 +368,13 @@ class GUI:
     self.frame4(self.edited_image)
 
   def blur_image(self):
-    self.clear_old_frames()
-    self.edited_image = blur.blur(self.edited_image)
-    self.frame4(self.edited_image)
-    self.frame2("none")
+    if self.isThereAProblem():
+      return
+    self.frame2("blur")
 
   def detected_edges_image(self):
-    self.clear_old_frames()
+    if self.isThereAProblem():
+      return
     self.edited_image = edge_detection.edge_detection(self.edited_image)
     self.frame4(self.edited_image)
     self.frame2("none")
