@@ -192,12 +192,12 @@ class GUI:
       applyButton.grid()
 
     elif condition == "color_balance":
-      slider_R = Scale(self.frame_2, from_=0, to=255, orient=HORIZONTAL, length=600, tickinterval=255, label="R VALUE")
-      slider_G = Scale(self.frame_2, from_=0, to=255, orient=HORIZONTAL, length=600, tickinterval=255, label="G VALUE")  
-      slider_B = Scale(self.frame_2, from_=0, to=255, orient=HORIZONTAL, length=600, tickinterval=255, label="B VALUE")
-      slider_R.set(255)
-      slider_G.set(255)
-      slider_B.set(255)
+      slider_R = Scale(self.frame_2, from_=0, to=254, orient=HORIZONTAL, length=600, tickinterval=254, label="R VALUE")
+      slider_G = Scale(self.frame_2, from_=0, to=254, orient=HORIZONTAL, length=600, tickinterval=254, label="G VALUE")  
+      slider_B = Scale(self.frame_2, from_=0, to=254, orient=HORIZONTAL, length=600, tickinterval=254, label="B VALUE")
+      slider_R.set(0)
+      slider_G.set(0)
+      slider_B.set(0)
       slider_R.grid()
       slider_G.grid()
       slider_B.grid()
