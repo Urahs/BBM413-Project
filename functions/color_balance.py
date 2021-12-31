@@ -1,4 +1,5 @@
 from PIL import Image
+
 def color_balance(image, R, G, B):
   imageR, imageG, imageB = image.split()
   imageR = imageR.point(lambda i: (255 // (255 - R)) * i)
